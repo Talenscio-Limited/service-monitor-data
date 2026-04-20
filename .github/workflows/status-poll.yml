@@ -1,0 +1,155 @@
+name: Poll Service Status
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'   # Every 15 minutes
+  workflow_dispatch:           # Allow manual trigger
+
+jobs:
+  poll:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Poll all service APIs
+        env:
+          BETTERSTACK_TOKEN: ${{ secrets.BETTERSTACK_TOKEN }}
+        run: |
+          python3 << 'EOF'
+          import json
+          import urllib.request
+          import urllib.error
+          from datetime import datetime, timezone, timedelta
+
+          # BST offset (UTC+1) — adjust to UTC+0 in winter if needed
+          bst = timezone(timedelta(hours=1))
+          now = datetime.now(bst).strftime('%d/%m/%Y %H:%M:%S UTC+1')
+
+          token = "${{ env.BETTERSTACK_TOKEN }}"
+
+          results = []
+
+          # ── Helper: Statuspage v2 ──────────────────────────────────────────
+          def fetch_statuspage(name, url, sort_key):
+              try:
+                  req = urllib.request.Request(url, headers={'User-Agent': 'TalenscioPoll/1.0'})
+                  with urllib.request.urlopen(req, timeout=10) as r:
+                      data = json.loads(r.read())
+                  indicator = data.get('status', {}).get('indicator', 'unknown').lower()
+                  description = data.get('status', {}).get('description', '')
+                  # Get latest incident if any
+                  incidents = data.get('incidents', [])
+                  latest_issue = incidents[0].get('name', 'None') if incidents else 'None'
+                  status_map = {
+                      'none': 'Operational',
+                      'minor': 'Degraded',
+                      'major': 'Incident',
+                      'critical': 'Incident',
+                      'maintenance': 'Maintenance'
+                  }
+                  status = status_map.get(indicator, 'Unknown')
+              except Exception as e:
+                  status = 'Unknown'
+                  description = str(e)
+                  latest_issue = 'None'
+              return {'service': name, 'status': status, 'description': description, 'latestIssue': latest_issue, 'lastChecked': now, 'sortKey': sort_key}
+
+          # ── Helper: BetterStack private API ───────────────────────────────
+          def fetch_betterstack(name, monitor_id, sort_key):
+              try:
+                  url = f'https://uptime.betterstack.com/api/v2/monitors/{monitor_id}'
+                  req = urllib.request.Request(url, headers={
+                      'Authorization': f'Bearer {token}',
+                      'User-Agent': 'TalenscioPoll/1.0'
+                  })
+                  with urllib.request.urlopen(req, timeout=10) as r:
+                      data = json.loads(r.read())
+                  attrs = data.get('data', {}).get('attributes', {})
+                  availability = attrs.get('availability', None)
+                  monitor_status = attrs.get('status', 'unknown').lower()
+                  status_map = {
+                      'up': 'Operational',
+                      'down': 'Incident',
+                      'paused': 'Maintenance',
+                      'pending': 'Unknown'
+                  }
+                  status = status_map.get(monitor_status, 'Unknown')
+                  description = f"Availability: {availability}%" if availability else "No data"
+                  latest_issue = attrs.get('last_checked_at', 'None')
+              except Exception as e:
+                  status = 'Unknown'
+                  description = str(e)
+                  latest_issue = 'None'
+              return {'service': name, 'status': status, 'description': description, 'latestIssue': latest_issue, 'lastChecked': now, 'sortKey': sort_key}
+
+          # ── Helper: SorryApp ──────────────────────────────────────────────
+          def fetch_sorryapp(name, url, sort_key):
+              try:
+                  req = urllib.request.Request(url, headers={'User-Agent': 'TalenscioPoll/1.0'})
+                  with urllib.request.urlopen(req, timeout=10) as r:
+                      data = json.loads(r.read())
+                  # SorryApp returns response.result.status
+                  status_raw = data.get('response', {}).get('result', {}).get('status', 'unknown').lower()
+                  description = data.get('response', {}).get('result', {}).get('description', '')
+                  status_map = {
+                      'operational': 'Operational',
+                      'degraded': 'Degraded',
+                      'outage': 'Incident',
+                      'maintenance': 'Maintenance'
+                  }
+                  status = status_map.get(status_raw, 'Unknown')
+                  latest_issue = 'None'
+              except Exception as e:
+                  status = 'Unknown'
+                  description = str(e)
+                  latest_issue = 'None'
+              return {'service': name, 'status': status, 'description': description, 'latestIssue': latest_issue, 'lastChecked': now, 'sortKey': sort_key}
+
+          # ── Helper: Talenscio Platform via BetterStack ────────────────────
+          def fetch_talenscio_platform(sort_key):
+              return fetch_betterstack('Talenscio Platform', '3860580', sort_key)
+
+          # ── Poll all services ─────────────────────────────────────────────
+          results.append(fetch_talenscio_platform(1))
+          results.append(fetch_sorryapp('ANS Hosting', 'https://489048dd.sorryapp.com/api/v1/status', 2))
+          results.append(fetch_statuspage('Daily.co', 'https://dailystatus.co/api/v2/status.json', 3))
+          results.append(fetch_betterstack('TalkJS', '4301538', 4))
+          results.append(fetch_statuspage('Mailgun / Sinch', 'https://status.mailgun.com/api/v2/status.json', 5))
+          results.append(fetch_statuspage('Miro', 'https://status.miro.com/api/v2/status.json', 6))
+          results.append(fetch_betterstack('Stripe', '4301545', 7))
+          results.append(fetch_statuspage('TawkTo', 'https://status.tawk.to/api/v2/status.json', 8))
+
+          # Sort by sortKey
+          results.sort(key=lambda x: x['sortKey'])
+
+          # Summary counts
+          summary = {
+              'operational': sum(1 for r in results if r['status'] == 'Operational'),
+              'degraded': sum(1 for r in results if r['status'] == 'Degraded'),
+              'incident': sum(1 for r in results if r['status'] == 'Incident'),
+              'maintenance': sum(1 for r in results if r['status'] == 'Maintenance'),
+              'unknown': sum(1 for r in results if r['status'] == 'Unknown'),
+              'lastRefresh': now
+          }
+
+          output = {'services': results, 'summary': summary}
+
+          with open('status.json', 'w') as f:
+              json.dump(output, f, indent=2)
+
+          print(f"Polled {len(results)} services at {now}")
+          for r in results:
+              print(f"  {r['service']}: {r['status']}")
+          EOF
+
+      - name: Commit status.json
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add status.json
+          git diff --staged --quiet || git commit -m "chore: update service status $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push
