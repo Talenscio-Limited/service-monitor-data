@@ -115,8 +115,8 @@ jobs:
 
           # ── Poll all services ─────────────────────────────────────────────
           results.append(fetch_talenscio_platform(1))
-          results.append(fetch_sorryapp('ANS Hosting', 'https://489048dd.sorryapp.com/api/v1/status', 2))
-          results.append(fetch_statuspage('Daily.co', 'https://dailystatus.co/api/v2/status.json', 3))
+          results.append(fetch_sorryapp('ANS Hosting', 'https://status.ans.co.uk/api/v1/', 2))
+          results.append(fetch_statuspage('Daily.co', 'https://status.daily.co/api/v2/status.json', 3))
           results.append(fetch_betterstack('TalkJS', '4301538', 4))
           results.append(fetch_statuspage('Mailgun / Sinch', 'https://status.mailgun.com/api/v2/status.json', 5))
           results.append(fetch_statuspage('Miro', 'https://status.miro.com/api/v2/status.json', 6))
