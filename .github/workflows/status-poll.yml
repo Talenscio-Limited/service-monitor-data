@@ -92,13 +92,15 @@ jobs:
                   req = urllib.request.Request(url, headers={'User-Agent': 'TalenscioPoll/1.0'})
                   with urllib.request.urlopen(req, timeout=10) as r:
                       data = json.loads(r.read())
-                  # SorryApp returns response.result.status
-                  status_raw = data.get('response', {}).get('result', {}).get('status', 'unknown').lower()
-                  description = data.get('response', {}).get('result', {}).get('description', '')
+                  # SorryApp returns page.state and page.state_text
+                  page = data.get('page', {})
+                  status_raw = page.get('state', 'unknown').lower()
+                  description = page.get('state_text', '')
                   status_map = {
                       'operational': 'Operational',
                       'degraded': 'Degraded',
                       'outage': 'Incident',
+                      'incident': 'Incident',
                       'maintenance': 'Maintenance'
                   }
                   status = status_map.get(status_raw, 'Unknown')
