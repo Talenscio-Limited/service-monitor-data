@@ -4,8 +4,8 @@
       "service": "Talenscio Platform",
       "status": "Operational",
       "description": "No data",
-      "latestIssue": "2026-04-20T17:32:11.000Z",
-      "lastChecked": "20/04/2026 18:32:19 UTC+1",
+      "latestIssue": "2026-04-20T17:41:19.000Z",
+      "lastChecked": "20/04/2026 18:42:25 UTC+1",
       "sortKey": 1
     },
     {
@@ -13,7 +13,7 @@
       "status": "Unknown",
       "description": "",
       "latestIssue": "None",
-      "lastChecked": "20/04/2026 18:32:19 UTC+1",
+      "lastChecked": "20/04/2026 18:42:25 UTC+1",
       "sortKey": 2
     },
     {
@@ -21,15 +21,15 @@
       "status": "Unknown",
       "description": "<urlopen error [Errno -2] Name or service not known>",
       "latestIssue": "None",
-      "lastChecked": "20/04/2026 18:32:19 UTC+1",
+      "lastChecked": "20/04/2026 18:42:25 UTC+1",
       "sortKey": 3
     },
     {
       "service": "TalkJS",
       "status": "Operational",
       "description": "No data",
-      "latestIssue": "2026-04-20T17:32:01.000Z",
-      "lastChecked": "20/04/2026 18:32:19 UTC+1",
+      "latestIssue": "2026-04-20T17:42:24.000Z",
+      "lastChecked": "20/04/2026 18:42:25 UTC+1",
       "sortKey": 4
     },
     {
@@ -37,7 +37,7 @@
       "status": "Operational",
       "description": "All Systems Operational",
       "latestIssue": "None",
-      "lastChecked": "20/04/2026 18:32:19 UTC+1",
+      "lastChecked": "20/04/2026 18:42:25 UTC+1",
       "sortKey": 5
     },
     {
@@ -45,15 +45,15 @@
       "status": "Operational",
       "description": "All Systems Operational",
       "latestIssue": "None",
-      "lastChecked": "20/04/2026 18:32:19 UTC+1",
+      "lastChecked": "20/04/2026 18:42:25 UTC+1",
       "sortKey": 6
     },
     {
       "service": "Stripe",
       "status": "Operational",
       "description": "No data",
-      "latestIssue": "2026-04-20T17:31:53.000Z",
-      "lastChecked": "20/04/2026 18:32:19 UTC+1",
+      "latestIssue": "2026-04-20T17:41:52.000Z",
+      "lastChecked": "20/04/2026 18:42:25 UTC+1",
       "sortKey": 7
     },
     {
@@ -61,7 +61,7 @@
       "status": "Operational",
       "description": "All Systems Operational",
       "latestIssue": "None",
-      "lastChecked": "20/04/2026 18:32:19 UTC+1",
+      "lastChecked": "20/04/2026 18:42:25 UTC+1",
       "sortKey": 8
     }
   ],
@@ -71,6 +71,6 @@
     "incident": 0,
     "maintenance": 0,
     "unknown": 2,
-    "lastRefresh": "20/04/2026 18:32:19 UTC+1"
+    "lastRefresh": "20/04/2026 18:42:25 UTC+1"
   }
 }
