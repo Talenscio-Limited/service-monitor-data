@@ -43,7 +43,6 @@ jobs:
                       data = json.loads(r.read())
                   indicator = data.get('status', {}).get('indicator', 'unknown').lower()
                   description = data.get('status', {}).get('description', '')
-                  # Get latest incident if any
                   incidents = data.get('incidents', [])
                   latest_issue = incidents[0].get('name', 'None') if incidents else 'None'
                   status_map = {
@@ -80,7 +79,7 @@ jobs:
                       'pending': 'Unknown'
                   }
                   status = status_map.get(monitor_status, 'Unknown')
-              description = f"Availability: {availability}%" if availability else "All systems operational"
+                  description = f"Availability: {availability}%" if availability else "All systems operational"
                   latest_issue = 'None'
               except Exception as e:
                   status = 'Unknown'
@@ -94,7 +93,6 @@ jobs:
                   req = urllib.request.Request(url, headers={'User-Agent': 'TalenscioPoll/1.0'})
                   with urllib.request.urlopen(req, timeout=10) as r:
                       data = json.loads(r.read())
-                  # SorryApp returns page.state and page.state_text
                   page = data.get('page', {})
                   status_raw = page.get('state', 'unknown').lower()
                   description = page.get('state_text', '')
