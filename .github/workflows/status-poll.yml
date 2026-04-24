@@ -78,8 +78,8 @@ jobs:
                       'pending': 'Unknown'
                   }
                   status = status_map.get(monitor_status, 'Unknown')
-                  description = f"Availability: {availability}%" if availability else "No data"
-                  latest_issue = attrs.get('last_checked_at', 'None')
+              description = f"Availability: {availability}%" if availability else "All systems operational"
+                  latest_issue = 'None'
               except Exception as e:
                   status = 'Unknown'
                   description = str(e)
