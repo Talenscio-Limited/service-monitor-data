@@ -2,7 +2,7 @@ name: Poll Service Status
 
 on:
   schedule:
-    - cron: '*/15 * * * *'   # Every 15 minutes
+    - cron: '* * * 1 *'   # Every 15 minutes
   workflow_dispatch:           # Allow manual trigger
 
 jobs:
