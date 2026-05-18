@@ -214,7 +214,7 @@ jobs:
           from email.mime.text import MIMEText
 
           smtp_host = 'smtp.eu.mailgun.org'
-          smtp_port = 587
+          smtp_port = 465
           smtp_user = 'postmaster@m.talenscio.com'
           smtp_pass = os.environ.get('MAILGUN_SMTP_PASSWORD', '').strip()
           from_address = 'Talenscio Service Monitor <postmaster@m.talenscio.com>'
@@ -253,8 +253,9 @@ jobs:
               msg['To'] = to_address
 
               try:
-                  with smtplib.SMTP(smtp_host, smtp_port) as server:
-                      server.starttls()
+                  import ssl
+                  context = ssl.create_default_context()
+                  with smtplib.SMTP_SSL(smtp_host, smtp_port, context=context) as server:
                       server.login(smtp_user, smtp_pass)
                       server.sendmail(smtp_user, to_address, msg.as_string())
                   print(f"  Email sent: {subject}")
