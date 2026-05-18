@@ -205,22 +205,20 @@ jobs:
       - name: Send status change alerts
         if: always()
         env:
-          MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
+          MAILGUN_SMTP_PASSWORD: ${{ secrets.MAILGUN_SMTP_PASSWORD }}
         run: |
           python3 << 'EOF'
           import json
-          import urllib.request
-          import urllib.parse
-          import urllib.error
-          import base64
+          import smtplib
           import os
+          from email.mime.text import MIMEText
 
-          api_key = os.environ.get('MAILGUN_API_KEY', '').strip()
-          domain = 'm.talenscio.com'
+          smtp_host = 'smtp.eu.mailgun.org'
+          smtp_port = 587
+          smtp_user = 'postmaster@m.talenscio.com'
+          smtp_pass = os.environ.get('MAILGUN_SMTP_PASSWORD', '').strip()
           from_address = 'Talenscio Service Monitor <postmaster@m.talenscio.com>'
           to_address = 'support@talenscio.com'
-
-          print(f"  API key length: {len(api_key)} chars")
 
           try:
               with open('status_changes.json', 'r') as f:
@@ -249,27 +247,17 @@ jobs:
               if latest_issue and latest_issue != 'None':
                   body += f"Latest Issue: {latest_issue}\n"
 
-              data = urllib.parse.urlencode({
-                  'from': from_address,
-                  'to': to_address,
-                  'subject': subject,
-                  'text': body,
-              }).encode('utf-8')
-
-              url = f'https://api.eu.mailgun.net/v3/{domain}/messages'
-              req = urllib.request.Request(url, data=data, method='POST')
-              credentials = base64.b64encode(f'api:{api_key}'.encode('utf-8')).decode('utf-8')
-              req.add_header('Authorization', f'Basic {credentials}')
+              msg = MIMEText(body)
+              msg['Subject'] = subject
+              msg['From'] = from_address
+              msg['To'] = to_address
 
               try:
-                  with urllib.request.urlopen(req, timeout=15) as r:
-                      response_body = r.read().decode('utf-8')
-                      print(f"  Email sent: {subject}")
-                      print(f"  Response: {response_body}")
-              except urllib.error.HTTPError as e:
-                  error_body = e.read().decode('utf-8')
-                  print(f"  Email failed for {service}: HTTP {e.code} {e.reason}")
-                  print(f"  Error detail: {error_body}")
+                  with smtplib.SMTP(smtp_host, smtp_port) as server:
+                      server.starttls()
+                      server.login(smtp_user, smtp_pass)
+                      server.sendmail(smtp_user, to_address, msg.as_string())
+                  print(f"  Email sent: {subject}")
               except Exception as e:
                   print(f"  Email failed for {service}: {e}")
 
