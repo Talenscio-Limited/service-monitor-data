@@ -203,8 +203,8 @@ jobs:
           git push
 
       - name: Send status change alerts
-              if: always()
-              env:
+        if: always()
+        env:
                 MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
               run: |
                 python3 << 'EOF'
