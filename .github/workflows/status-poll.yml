@@ -203,66 +203,71 @@ jobs:
           git push
 
       - name: Send status change alerts
-        if: always()
-        env:
-          MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
-        run: |
-          python3 << 'EOF'
-          import json
-          import urllib.request
-          import urllib.parse
-          import os
-
-          api_key = os.environ.get('MAILGUN_API_KEY', '')
-          domain = 'm.talenscio.com'
-          from_address = 'Talenscio Service Monitor <alerts@m.talenscio.com>'
-          to_address = 'support@talenscio.com'
-
-          try:
-              with open('status_changes.json', 'r') as f:
-                  changes = json.load(f)
-          except Exception:
-              changes = []
-
-          if not changes:
-              print('No status changes detected - no emails to send')
-              exit(0)
-
-          for change in changes:
-              service = change['service']
-              alert_type = change['alert_type']
-              old_status = change['old_status']
-              new_status = change['new_status']
-              description = change['description']
-              latest_issue = change['latest_issue']
-
-              subject = f"{alert_type}: {service} is now {new_status}"
-              body = (
-                  f"Service: {service}\n"
-                  f"Status: {new_status} (was {old_status})\n"
-                  f"Description: {description}\n"
-              )
-              if latest_issue and latest_issue != 'None':
-                  body += f"Latest Issue: {latest_issue}\n"
-
-              data = urllib.parse.urlencode({
-                  'from': from_address,
-                  'to': to_address,
-                  'subject': subject,
-                  'text': body,
-              }).encode('utf-8')
-
-              url = f'https://api.eu.mailgun.net/v3/{domain}/messages'
-              req = urllib.request.Request(url, data=data, method='POST')
-
-              import base64
-              credentials = base64.b64encode(f'api:{api_key}'.encode('utf-8')).decode('utf-8')
-              req.add_header('Authorization', f'Basic {credentials}')
-
-              try:
-                  with urllib.request.urlopen(req, timeout=15) as r:
-                      print(f"  Email sent: {subject}")
-              except Exception as e:
-                  print(f"  Email failed for {service}: {e}")
-
-          EOF
+              if: always()
+              env:
+                MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
+              run: |
+                python3 << 'EOF'
+                import json
+                import urllib.request
+                import urllib.parse
+                import urllib.error
+                import base64
+                import os
+      
+                api_key = os.environ.get('MAILGUN_API_KEY', '').strip()
+                domain = 'm.talenscio.com'
+                from_address = 'Talenscio Service Monitor <alerts@m.talenscio.com>'
+                to_address = 'support@talenscio.com'
+      
+                try:
+                    with open('status_changes.json', 'r') as f:
+                        changes = json.load(f)
+                except Exception:
+                    changes = []
+      
+                if not changes:
+                    print('No status changes detected - no emails to send')
+                    exit(0)
+      
+                for change in changes:
+                    service = change['service']
+                    alert_type = change['alert_type']
+                    old_status = change['old_status']
+                    new_status = change['new_status']
+                    description = change['description']
+                    latest_issue = change['latest_issue']
+      
+                    subject = f"{alert_type}: {service} is now {new_status}"
+                    body = (
+                        f"Service: {service}\n"
+                        f"Status: {new_status} (was {old_status})\n"
+                        f"Description: {description}\n"
+                    )
+                    if latest_issue and latest_issue != 'None':
+                        body += f"Latest Issue: {latest_issue}\n"
+      
+                    data = urllib.parse.urlencode({
+                        'from': from_address,
+                        'to': to_address,
+                        'subject': subject,
+                        'text': body,
+                    }).encode('utf-8')
+      
+                    url = f'https://api.eu.mailgun.net/v3/{domain}/messages'
+                    req = urllib.request.Request(url, data=data, method='POST')
+                    credentials = base64.b64encode(f'api:{api_key}'.encode('utf-8')).decode('utf-8')
+                    req.add_header('Authorization', f'Basic {credentials}')
+      
+                    try:
+                        with urllib.request.urlopen(req, timeout=15) as r:
+                            response_body = r.read().decode('utf-8')
+                            print(f"  Email sent: {subject}")
+                            print(f"  Response: {response_body}")
+                    except urllib.error.HTTPError as e:
+                        error_body = e.read().decode('utf-8')
+                        print(f"  Email failed for {service}: HTTP {e.code} {e.reason}")
+                        print(f"  Error detail: {error_body}")
+                    except Exception as e:
+                        print(f"  Email failed for {service}: {e}")
+                EOF
