@@ -10,7 +10,7 @@
     },
     {
       "service": "ANS Hosting",
-      "status": "Operational",
+      "status": "Incident",
       "description": "All systems are go!",
       "latestIssue": "None",
       "lastChecked": "18/05/2026 11:07:39 UTC+1",
