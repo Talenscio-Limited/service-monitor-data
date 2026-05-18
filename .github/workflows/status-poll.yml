@@ -217,7 +217,7 @@ jobs:
 
           api_key = os.environ.get('MAILGUN_API_KEY', '').strip()
           domain = 'm.talenscio.com'
-          from_address = 'Talenscio Service Monitor <alerts@m.talenscio.com>'
+          from_address = 'Talenscio Service Monitor <postmaster@m.talenscio.com>'
           to_address = 'support@talenscio.com'
 
           print(f"  API key length: {len(api_key)} chars")
