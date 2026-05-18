@@ -158,13 +158,3 @@ jobs:
           git add status.json
           git diff --staged --quiet || git commit -m "chore: update service status $(date -u +'%Y-%m-%d %H:%M UTC')"
           git push
-      # ── Add this step AFTER the existing "Commit status.json" step ──────────────
- 
-      - name: Update MonServices SharePoint list
-        env:
-          SHAREPOINT_TENANT_ID: ${{ secrets.SHAREPOINT_TENANT_ID }}
-          SHAREPOINT_CLIENT_ID: ${{ secrets.SHAREPOINT_CLIENT_ID }}
-          SHAREPOINT_CLIENT_SECRET: ${{ secrets.SHAREPOINT_CLIENT_VALUE }}
-        run: |
-          pip install requests --quiet
-          python update_monservices.py
