@@ -115,6 +115,14 @@ jobs:
           def fetch_talenscio_platform(sort_key):
               return fetch_betterstack('Talenscio Platform', '3860580', sort_key)
 
+          # ── Load previous status.json for change detection ─────────────────
+          try:
+              with open('status.json', 'r') as f:
+                  prev_data = json.load(f)
+              prev_status = {s['service']: s['status'] for s in prev_data.get('services', [])}
+          except Exception:
+              prev_status = {}
+
           # ── Poll all services ─────────────────────────────────────────────
           results.append(fetch_talenscio_platform(1))
           results.append(fetch_sorryapp('ANS Hosting', 'https://489048dd.sorryapp.com/api/v1/status', 2))
@@ -146,6 +154,41 @@ jobs:
           print(f"Polled {len(results)} services at {now}")
           for r in results:
               print(f"  {r['service']}: {r['status']}")
+
+          # ── Detect status changes for non-BetterStack services ─────────────
+          # BetterStack already sends alerts for: Talenscio Platform, TalkJS, Stripe
+          BETTERSTACK_MONITORED = {'Talenscio Platform', 'TalkJS', 'Stripe'}
+          ALERT_STATUSES = {'Incident', 'Degraded', 'Maintenance'}
+
+          changes = []
+          for r in results:
+              name = r['service']
+              if name in BETTERSTACK_MONITORED:
+                  continue
+              new_status = r['status']
+              old_status = prev_status.get(name, 'Unknown')
+              if new_status == old_status:
+                  continue
+              # Determine alert type
+              if new_status in ALERT_STATUSES:
+                  alert_type = 'ALERT'
+              elif new_status == 'Operational' and old_status in ALERT_STATUSES:
+                  alert_type = 'RESOLVED'
+              else:
+                  continue
+              changes.append({
+                  'service': name,
+                  'alert_type': alert_type,
+                  'old_status': old_status,
+                  'new_status': new_status,
+                  'description': r['description'],
+                  'latest_issue': r['latestIssue'],
+              })
+              print(f"  STATUS CHANGE: {name} {old_status} -> {new_status} ({alert_type})")
+
+          # Write changes to file for next step
+          with open('status_changes.json', 'w') as f:
+              json.dump(changes, f)
           EOF
 
       - name: Commit status.json
@@ -158,3 +201,68 @@ jobs:
           git add status.json
           git diff --staged --quiet || git commit -m "chore: update service status $(date -u +'%Y-%m-%d %H:%M UTC')"
           git push
+
+      - name: Send status change alerts
+        if: always()
+        env:
+          MAILGUN_API_KEY: ${{ secrets.MAILGUN_API_KEY }}
+        run: |
+          python3 << 'EOF'
+          import json
+          import urllib.request
+          import urllib.parse
+          import os
+
+          api_key = os.environ.get('MAILGUN_API_KEY', '')
+          domain = 'm.talenscio.com'
+          from_address = 'Talenscio Service Monitor <alerts@m.talenscio.com>'
+          to_address = 'support@talenscio.com'
+
+          try:
+              with open('status_changes.json', 'r') as f:
+                  changes = json.load(f)
+          except Exception:
+              changes = []
+
+          if not changes:
+              print('No status changes detected - no emails to send')
+              exit(0)
+
+          for change in changes:
+              service = change['service']
+              alert_type = change['alert_type']
+              old_status = change['old_status']
+              new_status = change['new_status']
+              description = change['description']
+              latest_issue = change['latest_issue']
+
+              subject = f"{alert_type}: {service} is now {new_status}"
+              body = (
+                  f"Service: {service}\n"
+                  f"Status: {new_status} (was {old_status})\n"
+                  f"Description: {description}\n"
+              )
+              if latest_issue and latest_issue != 'None':
+                  body += f"Latest Issue: {latest_issue}\n"
+
+              data = urllib.parse.urlencode({
+                  'from': from_address,
+                  'to': to_address,
+                  'subject': subject,
+                  'text': body,
+              }).encode('utf-8')
+
+              url = f'https://api.eu.mailgun.net/v3/{domain}/messages'
+              req = urllib.request.Request(url, data=data, method='POST')
+
+              import base64
+              credentials = base64.b64encode(f'api:{api_key}'.encode('utf-8')).decode('utf-8')
+              req.add_header('Authorization', f'Basic {credentials}')
+
+              try:
+                  with urllib.request.urlopen(req, timeout=15) as r:
+                      print(f"  Email sent: {subject}")
+              except Exception as e:
+                  print(f"  Email failed for {service}: {e}")
+
+          EOF
