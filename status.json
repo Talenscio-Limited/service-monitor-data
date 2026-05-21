@@ -5,7 +5,7 @@
       "status": "Operational",
       "description": "All systems operational",
       "latestIssue": "None",
-      "lastChecked": "21/05/2026 17:17:55 UTC+1",
+      "lastChecked": "21/05/2026 19:20:26 UTC+1",
       "sortKey": 1
     },
     {
@@ -13,7 +13,7 @@
       "status": "Operational",
       "description": "All systems are go!",
       "latestIssue": "None",
-      "lastChecked": "21/05/2026 17:17:55 UTC+1",
+      "lastChecked": "21/05/2026 19:20:26 UTC+1",
       "sortKey": 2
     },
     {
@@ -21,7 +21,7 @@
       "status": "Operational",
       "description": "All Systems Operational",
       "latestIssue": "None",
-      "lastChecked": "21/05/2026 17:17:55 UTC+1",
+      "lastChecked": "21/05/2026 19:20:26 UTC+1",
       "sortKey": 3
     },
     {
@@ -29,7 +29,7 @@
       "status": "Operational",
       "description": "All systems operational",
       "latestIssue": "None",
-      "lastChecked": "21/05/2026 17:17:55 UTC+1",
+      "lastChecked": "21/05/2026 19:20:26 UTC+1",
       "sortKey": 4
     },
     {
@@ -37,15 +37,15 @@
       "status": "Operational",
       "description": "All Systems Operational",
       "latestIssue": "None",
-      "lastChecked": "21/05/2026 17:17:55 UTC+1",
+      "lastChecked": "21/05/2026 19:20:26 UTC+1",
       "sortKey": 5
     },
     {
       "service": "Miro",
-      "status": "Degraded",
-      "description": "Partial System Degradation",
+      "status": "Operational",
+      "description": "All Systems Operational",
       "latestIssue": "None",
-      "lastChecked": "21/05/2026 17:17:55 UTC+1",
+      "lastChecked": "21/05/2026 19:20:26 UTC+1",
       "sortKey": 6
     },
     {
@@ -53,7 +53,7 @@
       "status": "Operational",
       "description": "All systems operational",
       "latestIssue": "None",
-      "lastChecked": "21/05/2026 17:17:55 UTC+1",
+      "lastChecked": "21/05/2026 19:20:26 UTC+1",
       "sortKey": 7
     },
     {
@@ -61,16 +61,16 @@
       "status": "Operational",
       "description": "All Systems Operational",
       "latestIssue": "None",
-      "lastChecked": "21/05/2026 17:17:55 UTC+1",
+      "lastChecked": "21/05/2026 19:20:26 UTC+1",
       "sortKey": 8
     }
   ],
   "summary": {
-    "operational": 7,
-    "degraded": 1,
+    "operational": 8,
+    "degraded": 0,
     "incident": 0,
     "maintenance": 0,
     "unknown": 0,
-    "lastRefresh": "21/05/2026 17:17:55 UTC+1"
+    "lastRefresh": "21/05/2026 19:20:26 UTC+1"
   }
 }
