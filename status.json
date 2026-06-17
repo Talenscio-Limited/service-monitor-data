@@ -5,7 +5,7 @@
       "status": "Operational",
       "description": "All systems operational",
       "latestIssue": "None",
-      "lastChecked": "17/06/2026 17:44:24 UTC+1",
+      "lastChecked": "17/06/2026 20:14:13 UTC+1",
       "sortKey": 1
     },
     {
@@ -13,15 +13,15 @@
       "status": "Operational",
       "description": "All systems are go!",
       "latestIssue": "None",
-      "lastChecked": "17/06/2026 17:44:24 UTC+1",
+      "lastChecked": "17/06/2026 20:14:13 UTC+1",
       "sortKey": 2
     },
     {
       "service": "Daily.co",
-      "status": "Unknown",
-      "description": "HTTP Error 405: Not Allowed",
+      "status": "Operational",
+      "description": "All Systems Operational",
       "latestIssue": "None",
-      "lastChecked": "17/06/2026 17:44:24 UTC+1",
+      "lastChecked": "17/06/2026 20:14:13 UTC+1",
       "sortKey": 3
     },
     {
@@ -29,15 +29,15 @@
       "status": "Operational",
       "description": "All systems operational",
       "latestIssue": "None",
-      "lastChecked": "17/06/2026 17:44:24 UTC+1",
+      "lastChecked": "17/06/2026 20:14:13 UTC+1",
       "sortKey": 4
     },
     {
       "service": "Mailgun / Sinch",
-      "status": "Unknown",
-      "description": "HTTP Error 405: Not Allowed",
+      "status": "Operational",
+      "description": "All Systems Operational",
       "latestIssue": "None",
-      "lastChecked": "17/06/2026 17:44:24 UTC+1",
+      "lastChecked": "17/06/2026 20:14:13 UTC+1",
       "sortKey": 5
     },
     {
@@ -45,7 +45,7 @@
       "status": "Operational",
       "description": "All Systems Operational",
       "latestIssue": "None",
-      "lastChecked": "17/06/2026 17:44:24 UTC+1",
+      "lastChecked": "17/06/2026 20:14:13 UTC+1",
       "sortKey": 6
     },
     {
@@ -53,24 +53,24 @@
       "status": "Operational",
       "description": "All systems operational",
       "latestIssue": "None",
-      "lastChecked": "17/06/2026 17:44:24 UTC+1",
+      "lastChecked": "17/06/2026 20:14:13 UTC+1",
       "sortKey": 7
     },
     {
       "service": "TawkTo",
-      "status": "Unknown",
-      "description": "HTTP Error 405: Not Allowed",
+      "status": "Operational",
+      "description": "All Systems Operational",
       "latestIssue": "None",
-      "lastChecked": "17/06/2026 17:44:24 UTC+1",
+      "lastChecked": "17/06/2026 20:14:13 UTC+1",
       "sortKey": 8
     }
   ],
   "summary": {
-    "operational": 5,
+    "operational": 8,
     "degraded": 0,
     "incident": 0,
     "maintenance": 0,
-    "unknown": 3,
-    "lastRefresh": "17/06/2026 17:44:24 UTC+1"
+    "unknown": 0,
+    "lastRefresh": "17/06/2026 20:14:13 UTC+1"
   }
 }
