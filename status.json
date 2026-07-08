@@ -5,7 +5,7 @@
       "status": "Operational",
       "description": "All systems operational",
       "latestIssue": "None",
-      "lastChecked": "08/07/2026 02:00:32 UTC+1",
+      "lastChecked": "08/07/2026 05:32:48 UTC+1",
       "sortKey": 1
     },
     {
@@ -13,15 +13,15 @@
       "status": "Operational",
       "description": "All systems are go!",
       "latestIssue": "None",
-      "lastChecked": "08/07/2026 02:00:32 UTC+1",
+      "lastChecked": "08/07/2026 05:32:48 UTC+1",
       "sortKey": 2
     },
     {
       "service": "Daily.co",
-      "status": "Operational",
-      "description": "All Systems Operational",
+      "status": "Unknown",
+      "description": "The read operation timed out",
       "latestIssue": "None",
-      "lastChecked": "08/07/2026 02:00:32 UTC+1",
+      "lastChecked": "08/07/2026 05:32:48 UTC+1",
       "sortKey": 3
     },
     {
@@ -29,7 +29,7 @@
       "status": "Operational",
       "description": "All systems operational",
       "latestIssue": "None",
-      "lastChecked": "08/07/2026 02:00:32 UTC+1",
+      "lastChecked": "08/07/2026 05:32:48 UTC+1",
       "sortKey": 4
     },
     {
@@ -37,7 +37,7 @@
       "status": "Operational",
       "description": "All Systems Operational",
       "latestIssue": "None",
-      "lastChecked": "08/07/2026 02:00:32 UTC+1",
+      "lastChecked": "08/07/2026 05:32:48 UTC+1",
       "sortKey": 5
     },
     {
@@ -45,7 +45,7 @@
       "status": "Operational",
       "description": "All Systems Operational",
       "latestIssue": "None",
-      "lastChecked": "08/07/2026 02:00:32 UTC+1",
+      "lastChecked": "08/07/2026 05:32:48 UTC+1",
       "sortKey": 6
     },
     {
@@ -53,24 +53,24 @@
       "status": "Operational",
       "description": "All systems operational",
       "latestIssue": "None",
-      "lastChecked": "08/07/2026 02:00:32 UTC+1",
+      "lastChecked": "08/07/2026 05:32:48 UTC+1",
       "sortKey": 7
     },
     {
       "service": "TawkTo",
-      "status": "Operational",
-      "description": "All Systems Operational",
+      "status": "Unknown",
+      "description": "HTTP Error 503: Service Unavailable",
       "latestIssue": "None",
-      "lastChecked": "08/07/2026 02:00:32 UTC+1",
+      "lastChecked": "08/07/2026 05:32:48 UTC+1",
       "sortKey": 8
     }
   ],
   "summary": {
-    "operational": 8,
+    "operational": 6,
     "degraded": 0,
     "incident": 0,
     "maintenance": 0,
-    "unknown": 0,
-    "lastRefresh": "08/07/2026 02:00:32 UTC+1"
+    "unknown": 2,
+    "lastRefresh": "08/07/2026 05:32:48 UTC+1"
   }
 }
